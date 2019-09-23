@@ -1,151 +1,172 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const myjQuery = function (value) {
-        const elementList = document.querySelectorAll(value);
+const myjQuery = function (value) {
+    let listOfElements = [];
 
-        return {
-            addClass(newClass) {
-                for (let i = 0; i < elementList.length; ++i) {
-                    elementList[i].classList.add(newClass);
-                }
+    if (value instanceof HTMLElement) {
+        listOfElements.push(value);
+    } else if (value.match(/<[^<>]+/)) {
+        const newNode = value.match(/[^<>]+/);
+        listOfElements.push(document.createElement(newNode));
+        document.body.appendChild(listOfElements[0]);
+    } else {
+        listOfElements = document.querySelectorAll(value);
+    }
 
-                return this;
-            },
-            removeClass(remoteClass) {
-                for (let i = 0; i < elementList.length; ++i) {
-                    elementList[i].classList.remove(remoteClass);
-                }
+    return {
+        addClass(className) {
+            [].forEach.call(listOfElements, (element) => {
+                element.classList.add(className);
+            });
 
-                return this;
-            },
-            append(data) {
-                for (let i = 0; i < elementList.length; ++i) {
-                    const lastValue = elementList[i].innerHTML;
-                    elementList[i].innerHTML = `${lastValue} ${data}`;
-                }
+            return this;
+        },
+        removeClass(className) {
+            [].forEach.call(listOfElements, (element) => element.classList.remove(className));
 
-                return this;
-            },
-            remove(elementName) {
-                if (elementName == null) {
-                    for (let i = 0; i < elementList.length; ++i) {
-                        elementList[i].remove();
-                    }
+            return this;
+        },
+        append(data) {
+            [].forEach.call(listOfElements, (element) => {
+                if (data.match(/<[^<>]+/)) {
+                    const newNode = data.match(/[^<>]+/);
+                    const content = data.match(/<([\w]+)[^>]*>(.*?)<\/\1>/);
+                    const newElement = document.createElement(newNode);
+                    newElement.innerHTML = content[0];
+                    element.append(newElement);
                 } else {
-                    const elem = document.createElement(elementName);
+                    element.append(data);
+                }
+            });
 
-                    for (let i = 0; i < elementList.length; ++i) {
-                        const children = elementList[i].childNodes;
+            return this;
+        },
+        remove(elementName) {
+            if (elementName == null) {
+                [].forEach.call(listOfElements, (element) => element.remove());
+            } else {
+                const elementsToRemove = document.querySelectorAll(elementName);
 
-                        for (const child of children) {
-                            elem.innerHTML = child.innerHTML;
-
-                            if (child.nodeType != 3 && child.isEqualNode(elem)) {
+                [].forEach.call(listOfElements, (element) => {
+                    const children = element.childNodes;
+                    [].forEach.call(elementsToRemove, (elementToRemove) => {
+                        [].forEach.call(children, (child) => {
+                            if (child.nodeName != "#text" && child.isEqualNode(elementToRemove)) {
                                 child.remove();
                             }
-                        }
+                        });
+                    });
+                });
+            }
+
+            return this;
+        },
+        text(content) {
+            if (content == null) {
+                let commonValue = "";
+
+                [].forEach.call(listOfElements, (element) => {
+                    commonValue = `${commonValue + element.innerHTML} `;
+                });
+
+                return commonValue;
+            }
+
+            [].forEach.call(listOfElements, (element) => {
+                element.innerHTML = content;
+            });
+
+            return this;
+        },
+        attr(attribute, valueAttribute) {
+            if (value == null) {
+                return listOfElements[0].getAttribute(attribute);
+            }
+            listOfElements[0].setAttribute(attribute, valueAttribute);
+
+            return this;
+        },
+        children() {
+            const childNode = [];
+
+            [].forEach.call(listOfElements, (element) => {
+                const children = element.childNodes;
+                [].forEach.call(children, (child) => {
+                    if (child.nodeName != "#text") {
+                        childNode.push(child);
                     }
-                }
+                });
+            });
 
-                return this;
-            },
-            text(content) {
-                if (content == null) {
-                    let commonValue = "";
+            listOfElements = childNode;
 
-                    for (let i = 0; i < elementList.length; ++i) {
-                        commonValue = `${commonValue + elementList[i].innerHTML} `;
-                    }
+            return this;
+        },
+        empty() {
+            [].forEach.call(listOfElements, (element) => {
+                element.innerHTML = "";
+            });
 
-                    return commonValue;
-                }
+            return this;
+        },
+        css(property, valueProperty) {
+            if (valueProperty != null) {
+                [].forEach.call(listOfElements, (element) => {
+                    const style = window.getComputedStyle(element);
+                    element.style.setProperty(property, valueProperty);
+                });
+            } else {
+                const arrayOfProperties = [];
 
-                for (let i = 0; i < elementList.length; ++i) {
-                    elementList[i].innerHTML = content;
-                }
+                [].forEach.call(listOfElements, () => {
+                    const style = window.getComputedStyle(listOfElements[0]);
+                    arrayOfProperties.push(style.getPropertyValue(property));
+                });
 
-                return this;
-            },
-            attr(attribute, valueAttribute) {
-                if (value == null) {
-                    return elementList[0].getAttribute(attribute);
-                }
-                elementList[0].setAttribute(attribute, valueAttribute);
+                return arrayOfProperties;
+            }
 
-                return this;
-            },
-            children() {
-                const childNode = [];
+            return this;
+        },
+        click(handler) {
+            [].forEach.call(listOfElements, (element) => {
+                element.addEventListener("click", handler, false);
+            });
 
-                for (const elem of elementList) {
-                    const children = elem.childNodes;
+            return this;
+        },
+        each(callback) {
+            [].forEach.call(listOfElements, (element) => {
+                callback.call(element);
+            });
 
-                    for (let i = 0; i < children.length; ++i) {
-                        if (children[i].nodeType != 3) {
-                            childNode.push(children[i]);
-                        }
-                    }
-                }
-            },
-            empty() {
-                for (let i = 0; i < elementList.length; ++i) {
-                    elementList[i].innerHTML = "";
-                }
-
-                return this;
-            },
-            css(prop, valueProperty) {
-                if (valueProperty != null) {
-                    for (let i = 0; i < elementList.length; ++i) {
-                        const style = window.getComputedStyle(elementList[i]);
-                        const lastValue = style.getPropertyValue(prop);
-                        elementList[i].style.setProperty(lastValue, valueProperty);
-                    }
+            return this;
+        },
+        toggle() {
+            [].forEach.call(listOfElements, (element) => {
+                if (element.hidden) {
+                    element.hidden = false;
                 } else {
-                    const style = window.getComputedStyle(elementList[0]);
-
-                    return style.getPropertyValue(prop);
+                    element.hidden = true;
                 }
+            });
 
-                return this;
-            },
-            click(handler) {
-                for (let i = 0; i < elementList.length; ++i) {
-                    elementList[i].addEventListener("click", handler, false);
-                }
+            return this;
+        },
+        wrap(wrappingElement) {
+            const parent = listOfElements[0].parentNode;
 
-                return this;
-            },
-            each(callback) {
-                for (let i = 0; i < elementList.length; ++i) {
-                    callback.call(elementList[i]);
-                }
+            [].forEach.call(listOfElements, (element) => {
+                element.insertAdjacentHTML("afterEnd", wrappingElement);
+            });
 
-                return this;
-            },
-            toggle() {
-                for (let i = 0; i < elementList.length; ++i) {
-                    if (elementList[i].hidden) {
-                        elementList[i].hidden = false;
-                    } else {
-                        elementList[i].hidden = true;
-                    }
-                }
-
-                return this;
-            },
-            wrap(elem) {
-                const parent = elementList[0].parentNode;
-                elementList[0].insertAdjacentHTML("afterEnd", elem);
-
+            [].forEach.call(listOfElements, (element) => {
                 for (let i = 0; i < parent.childNodes.length; ++i) {
-                    if (parent.childNodes[i].isEqualNode(elementList[0])) {
-                        console.log(parent.childNodes[i + 1]);
-                        parent.childNodes[i + 1].appendChild(elementList[0]);
+                    if (parent.childNodes[i].isEqualNode(element)) {
+                        parent.childNodes[i + 1].appendChild(element);
                     }
                 }
+            });
 
-                return this;
-            },
-        };
+            return this;
+        },
     };
-}, false);
+};

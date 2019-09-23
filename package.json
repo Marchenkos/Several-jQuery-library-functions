@@ -1,26 +1,32 @@
 {
-  "name": "js-library-autotests",
+  "name": "several-jquery-library-functions",
   "version": "1.0.0",
   "description": "",
-  "main": "js_lib.js",
+  "main": "jQuery.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "babel": {
     "presets": [
       "@babel/preset-env"
     ]
   },
+  "plugins": [
+    "dynamic-import-node"
+  ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Marchenkos/Task_ESlint_Autotests.git"
+    "url": "git+https://github.com/Marchenkos/Several-jQuery-library-functions.git"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Marchenkos/Task_ESlint_Autotests/issues"
+    "url": "https://github.com/Marchenkos/Several-jQuery-library-functions/issues"
   },
-  "homepage": "https://github.com/Marchenkos/Task_ESlint_Autotests#readme",
+  "homepage": "https://github.com/Marchenkos/Several-jQuery-library-functions#readme",
   "devDependencies": {
     "@babel/core": "^7.6.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.6.0",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
@@ -30,6 +36,15 @@
     "eslint-loader": "^3.0.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.14.3"
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "jest-extended": "^0.11.2",
+    "path": "^0.12.7",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9"
+  },
+  "dependencies": {
+    "glob": "^7.1.4",
+    "save": "^2.4.0"
   }
 }
