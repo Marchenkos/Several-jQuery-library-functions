@@ -1,10 +1,6 @@
 const myjQuery = function (value) {
     let listOfElements = [];
 
-    function enumerationAsArray(collection, callback) {
-        [].forEach.call(collection, callback);
-    }
-
     if (value instanceof HTMLElement) {
         listOfElements.push(value);
     } else if (value.match(/<[^<>]+/)) {
@@ -17,14 +13,14 @@ const myjQuery = function (value) {
 
     return {
         addClass(className) {
-            enumerationAsArray(listOfElements, element => {
+            [].forEach.call(listOfElements, element => {
                 element.classList.add(className);
             });
 
             return this;
         },
         removeClass(className) {
-            enumerationAsArray(listOfElements, element => {
+            [].forEach.call(listOfElements, element => {
                 element.classList.remove(className)
             });
 
@@ -33,15 +29,20 @@ const myjQuery = function (value) {
         append(data) {
             let insert = data;
 
-            if (data.match(/<[^<>]+/)) {
-                const newNode = data.match(/[^<>]+/);
-                const content = data.match(/<([\w]+)[^>]*>(.*?)<\/\1>/);
-                const newElement = document.createElement(newNode);
-                newElement.innerHTML = content[0];
-                insert = newElement;
+            if(typeof data === "function") {
+                data();
+                insert = document.body.lastChild;
+            } else {
+                if (data.match(/<[^<>]+/)) {
+                    const newNode = data.match(/[^<>]+/);
+                    const content = data.match(/<([\w]+)[^>]*>(.*?)<\/\1>/);
+                    const newElement = document.createElement(newNode);
+                    newElement.innerHTML = content[0];
+                    insert = newElement;
+                }
             }
 
-            enumerationAsArray(listOfElements, element => {
+            [].forEach.call(listOfElements, element => {
                 element.append(insert);
             });
 
@@ -49,12 +50,12 @@ const myjQuery = function (value) {
         },
         remove(elementName) {
             if (elementName == null) {
-                enumerationAsArray(listOfElements, element => {
+                [].forEach.call(listOfElements, element => {
                     element.remove()});
             } else {
-                enumerationAsArray(listOfElements, element => {
+                [].forEach.call(listOfElements, element => {
                     const elementsToRemove = element.querySelectorAll(elementName);
-                    enumerationAsArray(elementsToRemove, element => {
+                    [].forEach.call(listOfElements, element => {
                         element.remove();
                     });
                 });
@@ -65,14 +66,14 @@ const myjQuery = function (value) {
         text(content) {
             if (content == null) {
                 let commonValue = "";
-                enumerationAsArray(listOfElements, element => {
+                [].forEach.call(listOfElements, element => {
                     commonValue = `${commonValue + element.innerHTML} `;
                 });
 
                 return commonValue;
             }
 
-            enumerationAsArray(listOfElements, element => {
+            [].forEach.call(listOfElements, element => {
                 element.innerHTML = content;
             });
 
@@ -90,9 +91,9 @@ const myjQuery = function (value) {
         children() {
             const childNode = [];
 
-            enumerationAsArray(listOfElements, element => {
+            [].forEach.call(listOfElements, element => {
                 const children = element.childNodes;
-                enumerationAsArray(children, child => {
+                [].forEach.call(children, child => {
                     if (child.nodeName != "#text") {
                         childNode.push(child);
                     }
@@ -104,7 +105,7 @@ const myjQuery = function (value) {
             return this;
         },
         empty() {
-            enumerationAsArray(listOfElements, element => {
+            [].forEach.call(listOfElements, element => {
                 element.innerHTML = "";
             });
 
@@ -112,7 +113,7 @@ const myjQuery = function (value) {
         },
         css(property, valueProperty) {
             if (valueProperty != null) {
-                enumerationAsArray(listOfElements, element => {
+                [].forEach.call(listOfElements, element => {
                     const style = window.getComputedStyle(element);
                     element.style.setProperty(property, valueProperty);
                 });
@@ -128,21 +129,21 @@ const myjQuery = function (value) {
             return this;
         },
         click(handler) {
-            enumerationAsArray(listOfElements, element => {
+            [].forEach.call(listOfElements, (element) => {
                 element.addEventListener("click", handler, false);
             });
 
             return this;
         },
         each(callback) {
-            enumerationAsArray(listOfElements, element => {
+            [].forEach.call(listOfElements, (element) => {
                 callback.call(element);
             });
 
             return this;
         },
         toggle() {
-            enumerationAsArray(listOfElements, element => {
+            [].forEach.call(listOfElements, (element) => {
                 if (element.hidden) {
                     element.hidden = false;
                 } else {
@@ -156,7 +157,7 @@ const myjQuery = function (value) {
             const parent = listOfElements[0].parentNode;
             const newNode = wrappingElement.match(/[^<>]+/);
 
-            enumerationAsArray(listOfElements, element => {
+            [].forEach.call(listOfElements, element => {
                 const newElement = document.createElement(newNode);
                 parent.insertBefore(newElement, element);
                 newElement.appendChild(element);
