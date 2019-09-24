@@ -12,6 +12,9 @@ const myjQuery = function (value) {
     }
 
     return {
+        _element() {
+            return listOfElements[0];
+        },
         addClass(className) {
             [].forEach.call(listOfElements, element => {
                 element.classList.add(className);
@@ -28,9 +31,8 @@ const myjQuery = function (value) {
         },
         append(data) {
             let insert = data;
-
-            if(typeof data === "function") {
-                data();
+            
+            if (data instanceof HTMLElement) {
                 insert = document.body.lastChild;
             } else {
                 if (data.match(/<[^<>]+/)) {
@@ -66,10 +68,10 @@ const myjQuery = function (value) {
         text(content) {
             if (content == null) {
                 let commonValue = "";
+        
                 [].forEach.call(listOfElements, element => {
-                    commonValue = `${commonValue + element.innerHTML} `;
+                    commonValue = commonValue + element.innerHTML;
                 });
-
                 return commonValue;
             }
 
