@@ -9,9 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // myjQuery(".lala").wrap("<div>");
 // console.log(myjQuery("#dd").children().text());
 // myjQuery("#id1").empty();
-myjQuery("#dd").each(function () {
-    console.log(myjQuery(this).text());
-});
+// myjQuery("#dd").each(function () {
+//     console.log(myjQuery(this).text());
+// });
 // console.log(myjQuery("span").text());
 // setInterval(() => {
 //     myjQuery("#toggle").toggle();
@@ -20,5 +20,5 @@ myjQuery("#dd").each(function () {
 // myjQuery("#click").click(() => {
 //     alert(":))))");
 // });
-myjQuery("#container").append(myjQuery('<p>')._element());
+myjQuery("#container").append(myjQuery('<p>'));
 }, false);

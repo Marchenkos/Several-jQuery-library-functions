@@ -31,18 +31,16 @@ const myjQuery = function (value) {
         },
         append(data) {
             let insert = data;
-            
-            if (data instanceof HTMLElement) {
-                insert = document.body.lastChild;
-            } else {
-                if (data.match(/<[^<>]+/)) {
-                    const newNode = data.match(/[^<>]+/);
-                    const content = data.match(/<([\w]+)[^>]*>(.*?)<\/\1>/);
-                    const newElement = document.createElement(newNode);
-                    newElement.innerHTML = content[0];
-                    insert = newElement;
-                }
-            }
+
+            if (data._element && typeof data._element === "function") {
+                insert = data._element();
+            } else if (data.match(/<[^<>]+/)) {
+                        const newNode = data.match(/[^<>]+/);
+                        const content = data.match(/<([\w]+)[^>]*>(.*?)<\/\1>/);
+                        const newElement = document.createElement(newNode);
+                        newElement.innerHTML = content[0];
+                        insert = newElement;
+                    }
 
             [].forEach.call(listOfElements, element => {
                 element.append(insert);
